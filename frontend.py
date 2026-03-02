@@ -29,6 +29,7 @@ if st.button("Get Recommendations"):
             )
 
             if response.status_code == 200:
+                st.write(response.json())
                 results = response.json().get("recommended_assessments", [])
 
                 if results:
