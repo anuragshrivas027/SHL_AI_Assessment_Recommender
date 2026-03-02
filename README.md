@@ -1,150 +1,99 @@
-SHL AI Assessment Recommendation System
-Overview
+# SHL AI Assessment Recommendation System
 
-This project is an AI-powered assessment recommendation system designed to recommend relevant SHL Individual Test Solutions based on natural language job descriptions.
+## Project Overview
 
-The system uses semantic search with sentence embeddings to understand job requirements and retrieve the most relevant assessments from the SHL product catalogue.
+This project is an AI-powered SHL assessment recommendation system built using FastAPI and Sentence Transformers. 
+The system recommends relevant SHL Individual Test Solutions based on natural language job descriptions using semantic search.
 
-It supports:
+Instead of relying on keyword matching, the system understands the context and intent of job descriptions by converting 
+text into vector embeddings and performing similarity-based retrieval.
 
-Semantic similarity-based retrieval
+The project includes data crawling, dataset cleaning, embedding-based ranking, evaluation using Mean Recall@K, 
+a REST API backend, and an interactive Streamlit frontend.
 
-Balanced recommendations across multiple test types
 
-Evaluation using Mean Recall@K
+## Problem Statement
 
-REST API using FastAPI
+Recruiters often depend on manual filtering or keyword search to select assessments. 
+Keyword-based systems fail to capture deeper contextual meaning and frequently return irrelevant results.
 
-Interactive frontend using Streamlit
+This project solves the problem by:
 
-Reproducible dataset preparation pipeline
+- Understanding complete job descriptions using transformer-based embeddings
+- Matching them semantically with SHL assessment descriptions
+- Returning structured and balanced recommendations
+- Measuring retrieval performance using standard evaluation metrics
 
-Problem Statement
 
-Recruiters often rely on keyword-based filtering to select assessments, which leads to poor relevance and lack of contextual understanding.
+## Data Collection and Preparation
 
-This system addresses that limitation by:
+The SHL product catalogue was crawled and processed to create a structured dataset.
 
-Understanding full job descriptions
+Steps performed:
 
-Matching them semantically to assessment descriptions
+- Crawled SHL catalogue pages
+- Excluded pre-packaged job solutions
+- Collected 518 total assessments
+- Cleaned and filtered to 415 usable Individual Test Solutions
+- Structured important attributes:
+  - name
+  - url
+  - description
+  - test_type
+  - duration
+  - adaptive_support
+  - remote_support
 
-Returning structured, domain-balanced recommendations
+The final dataset is stored locally to ensure reproducibility and faster inference.
 
-Measuring retrieval performance using standard metrics
 
-System Architecture
+## System Architecture
 
-The solution follows a modular pipeline:
+Data Crawling → Data Cleaning → Dataset Structuring → Embedding Generation → Semantic Search → 
+Balanced Ranking → API → Frontend
 
-Data Crawling → Cleaning → Dataset Preparation → Embedding Generation → Semantic Retrieval → Balanced Ranking → API → Frontend
+The architecture is modular and organized inside the src directory with clear separation of concerns.
 
-Project Structure
-SHL_AI_Project/
-│
-├── app.py
-├── frontend.py
-├── requirements.txt
-├── README.md
-├── approach_document.pdf
-├── test_predictions.csv
-│
-├── src/
-│   ├── recommender.py
-│   ├── evaluate.py
-│   ├── generate_test_predictions.py
-│   ├── crawler.py
-│   ├── clean_catalog.py
-│   ├── merge_datasets.py
-│   └── enrich_catalog.py
-│
-├── data/
-│   └── shl_master_dataset.csv
-│
-└── screenshots/
-Data Preparation
 
-Crawled SHL product catalogue.
+## Recommendation Engine
 
-Excluded Pre-packaged Job Solutions.
+The system uses the sentence-transformers model: all-MiniLM-L6-v2
 
-Collected 518 total assessments.
+Process:
 
-Cleaned and filtered to 415 usable Individual Test Solutions.
+1. Convert all assessment descriptions into embeddings.
+2. Convert the user query (job description) into an embedding.
+3. Compute cosine similarity between query and assessment embeddings.
+4. Retrieve top K most similar assessments.
+5. Apply balancing logic across assessment categories.
 
-Stored the following attributes:
+This enables contextual matching rather than simple keyword overlap.
 
-name
 
-url
+## Balanced Recommendation Strategy
 
-description
+To prevent dominance of a single assessment category, the system ensures diversity across domains such as:
 
-test_type
+- Knowledge & Skills
+- Personality & Behavior
+- Ability & Aptitude
+- Simulations
+- Competencies
+- Assessment Exercises
 
-duration
+This produces realistic and well-rounded recommendations aligned with job requirements.
 
-adaptive_support
 
-remote_support
+## Evaluation
 
-All data is stored locally to ensure reproducibility.
-
-Recommendation Engine
-
-The system uses:
-
-sentence-transformers (all-MiniLM-L6-v2)
-
-Cosine similarity for semantic search
-
-Steps:
-
-Convert assessment descriptions into embeddings.
-
-Convert user query into embedding.
-
-Compute cosine similarity.
-
-Retrieve top K most similar assessments.
-
-Apply balancing logic across test types.
-
-This allows contextual understanding rather than keyword matching.
-
-Balanced Recommendation Strategy
-
-To prevent dominance of a single assessment category, the system:
-
-Uses test_type metadata
-
-Ensures diversity across:
-
-Knowledge & Skills
-
-Personality & Behavior
-
-Ability & Aptitude
-
-Simulations
-
-Competencies
-
-Assessment Exercises
-
-This ensures realistic and well-rounded recommendations.
-
-Evaluation
-
-Evaluation was performed using the provided labeled dataset.
+The model was evaluated using the provided labeled dataset.
 
 Metric Used:
-
 Mean Recall@K
 
-Recall@K = Relevant Retrieved in Top K / Total Relevant
+Recall@K = Relevant results retrieved in Top K / Total relevant results
 
-Performance Improvements:
+Performance progression:
 
 Initial baseline:
 Mean Recall@10 = 0.0200
@@ -155,142 +104,116 @@ Mean Recall@10 = 0.1467
 With K = 20:
 Mean Recall@20 = 0.2189
 
-This demonstrates measurable improvement through preprocessing and ranking enhancements.
+This improvement demonstrates effective preprocessing, ranking refinement, and embedding-based retrieval.
 
 To run evaluation:
-
 python -m src.evaluate
-API Implementation
 
-Built using FastAPI.
 
-Health Check
+## API Implementation
 
+The backend is implemented using FastAPI.
+
+Health Endpoint:
 GET /health
-
 Response:
+{"status": "ok"}
 
-{
-  "status": "ok"
-}
-Recommendation Endpoint
-
+Recommendation Endpoint:
 POST /recommend
 
 Input:
-
 {
   "query": "Job description text",
   "top_k": 10
 }
 
-Output:
-
-{
-  "recommended_assessments": [
-    {
-      "url": "...",
-      "name": "...",
-      "adaptive_support": "Yes/No",
-      "description": "...",
-      "duration": 45,
-      "remote_support": "Yes/No",
-      "test_type": ["Knowledge & Skills"]
-    }
-  ]
-}
-
-To run API locally:
-
-uvicorn app:app --reload
-
-Then open:
-
-http://127.0.0.1:8000/docs
-Frontend
-
-A Streamlit-based interface allows users to:
-
-Paste job descriptions
-
-Adjust number of recommendations
-
-View structured output interactively
+The API returns structured JSON containing recommended assessments with metadata.
 
 To run locally:
+uvicorn app:app --reload
 
+Access API documentation at:
+http://127.0.0.1:8000/docs
+
+
+## Frontend Application
+
+A Streamlit-based frontend provides an interactive interface where users can:
+
+- Paste job descriptions
+- Select number of recommendations
+- View structured results
+
+To run locally:
 streamlit run frontend.py
-Generating Submission File
+
+
+## Submission File Generation
 
 To generate predictions for the test dataset:
-
 python -m src.generate_test_predictions
 
 This creates:
-
 test_predictions.csv
 
 Format:
-
 Query,Assessment_url
-Installation
 
-Create virtual environment:
 
-python -m venv venv
-venv\Scripts\activate
+## Tech Stack
 
-Install dependencies:
+Backend:
+- FastAPI
+- Uvicorn
 
-pip install -r requirements.txt
-Dependencies
+Machine Learning:
+- Sentence Transformers
+- Scikit-learn (Cosine Similarity)
 
-fastapi
+Data Processing:
+- Pandas
 
-uvicorn
+Frontend:
+- Streamlit
 
-pandas
 
-sentence-transformers
+## Project Structure
 
-scikit-learn
+app.py
+frontend.py
+requirements.txt
+README.md
+approach_document.pdf
+test_predictions.csv
 
-streamlit
+src/
+  - recommender.py
+  - evaluate.py
+  - generate_test_predictions.py
+  - crawler.py
+  - clean_catalog.py
+  - merge_datasets.py
+  - enrich_catalog.py
 
-Deployment
+data/
+  - shl_master_dataset.csv
 
-The application can be deployed using:
+screenshots/
 
-Render
 
-Railway
+## Key Highlights
 
-HuggingFace Spaces
+- Semantic search instead of keyword filtering
+- Balanced multi-category recommendations
+- Measurable evaluation using Recall@K
+- Modular and maintainable architecture
+- REST API with structured responses
+- Interactive frontend interface
+- Reproducible dataset pipeline
 
-Start command for API:
 
-uvicorn app:app --host 0.0.0.0 --port 10000
-
-Start command for Streamlit:
-
-streamlit run frontend.py --server.port 10000 --server.address 0.0.0.0
-Key Highlights
-
-Fully modular pipeline
-
-Semantic search instead of keyword filtering
-
-Balanced recommendation logic
-
-Measurable evaluation
-
-Clean API design
-
-Interactive frontend
-
-Reproducible workflow
-
-Author
+## Author
 
 Developed as part of SHL AI Internship Assignment
-Candidate: Anurag Shrivas
+Anurag Shrivas
