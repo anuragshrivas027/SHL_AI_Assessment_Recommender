@@ -9,7 +9,7 @@ Instead of relying on keyword matching, the system understands the context and i
 text into vector embeddings and performing similarity-based retrieval.
 
 The project includes data crawling, dataset cleaning, embedding-based ranking, evaluation using Mean Recall@K, 
-a REST API backend, and an interactive Streamlit frontend.
+a REST API backend, an interactive Streamlit frontend, and live cloud deployment.
 
 
 ## Problem Statement
@@ -23,6 +23,7 @@ This project solves the problem by:
 - Matching them semantically with SHL assessment descriptions
 - Returning structured and balanced recommendations
 - Measuring retrieval performance using standard evaluation metrics
+- Deploying the solution as a publicly accessible production API
 
 
 ## Data Collection and Preparation
@@ -50,7 +51,7 @@ The final dataset is stored locally to ensure reproducibility and faster inferen
 ## System Architecture
 
 Data Crawling → Data Cleaning → Dataset Structuring → Embedding Generation → Semantic Search → 
-Balanced Ranking → API → Frontend
+Balanced Ranking → API → Frontend → Cloud Deployment
 
 The architecture is modular and organized inside the src directory with clear separation of concerns.
 
@@ -112,10 +113,11 @@ python -m src.evaluate
 
 ## API Implementation
 
-The backend is implemented using FastAPI.
+The backend is implemented using FastAPI and deployed on Railway (Cloud).
 
 Health Endpoint:
 GET /health
+
 Response:
 {"status": "ok"}
 
@@ -133,8 +135,24 @@ The API returns structured JSON containing recommended assessments with metadata
 To run locally:
 uvicorn app:app --reload
 
-Access API documentation at:
+Access API documentation locally:
 http://127.0.0.1:8000/docs
+
+
+## Live Deployment
+
+The backend API is successfully deployed on Railway.
+
+Public API Base URL:
+https://your-railway-url.up.railway.app
+
+Health Endpoint:
+https://your-railway-url.up.railway.app/health
+
+API Documentation:
+https://your-railway-url.up.railway.app/docs
+
+The service is publicly accessible and production-ready.
 
 
 ## Frontend Application
@@ -170,6 +188,7 @@ Backend:
 Machine Learning:
 - Sentence Transformers
 - Scikit-learn (Cosine Similarity)
+- PyTorch (CPU)
 
 Data Processing:
 - Pandas
@@ -177,12 +196,16 @@ Data Processing:
 Frontend:
 - Streamlit
 
+Deployment:
+- Railway
+
 
 ## Project Structure
 
 app.py
 frontend.py
 requirements.txt
+runtime.txt
 README.md
 approach_document.pdf
 test_predictions.csv
@@ -211,10 +234,10 @@ screenshots/
 - REST API with structured responses
 - Interactive frontend interface
 - Reproducible dataset pipeline
+- Live cloud deployment on Railway
 
 
 ## Author
 
 Developed as part of SHL AI Internship Assignment By:
 Anurag Shrivas
-
