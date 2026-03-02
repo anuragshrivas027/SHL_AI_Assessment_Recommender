@@ -215,5 +215,6 @@ screenshots/
 
 ## Author
 
-Developed as part of SHL AI Internship Assignment
+Developed as part of SHL AI Internship Assignment By:
 Anurag Shrivas
+
