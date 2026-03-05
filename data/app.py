@@ -10,7 +10,11 @@ recommender = SHLRecommender("data/shl_catalogue_cleaned.csv")
 class QueryRequest(BaseModel):
     query: str
     top_k: int = 10
-
+@app.get("/")
+def root():
+    return{
+        "message": "SHL AI Assessment Recommendation API is running", "docs": "/docs", "health": "/health", "recommend_endpoint": "/recommend"
+    }
 @app.get("/health")
 def health_check():
     return {"status": "ok"}
