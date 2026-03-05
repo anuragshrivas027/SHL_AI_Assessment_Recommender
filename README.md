@@ -108,6 +108,7 @@ Mean Recall@20 = 0.2189
 This improvement demonstrates effective preprocessing, ranking refinement, and embedding-based retrieval.
 
 To run evaluation:
+
 python -m src.evaluate
 
 
@@ -125,6 +126,7 @@ Recommendation Endpoint:
 POST /recommend
 
 Input:
+
 {
   "query": "Job description text",
   "top_k": 10
@@ -133,9 +135,11 @@ Input:
 The API returns structured JSON containing recommended assessments with metadata.
 
 To run locally:
+
 uvicorn app:app --reload
 
 Access API documentation locally:
+
 http://127.0.0.1:8000/docs
 
 
@@ -144,18 +148,25 @@ http://127.0.0.1:8000/docs
 The backend API is successfully deployed on Railway.
 
 Public API Base URL:
-https://your-railway-url.up.railway.app
+
+https://shlaiassessmentrecommender-production.up.railway.app
 
 Health Endpoint:
-https://your-railway-url.up.railway.app/health
+
+https://shlaiassessmentrecommender-production.up.railway.app/health
+
+Recommendation Endpoint:
+
+https://shlaiassessmentrecommender-production.up.railway.app/recommend
 
 API Documentation:
-https://your-railway-url.up.railway.app/docs
+
+https://shlaiassessmentrecommender-production.up.railway.app/docs
 
 The service is publicly accessible and production-ready.
 
 
-## Frontend Application
+## Web Application (Frontend)
 
 A Streamlit-based frontend provides an interactive interface where users can:
 
@@ -163,19 +174,27 @@ A Streamlit-based frontend provides an interactive interface where users can:
 - Select number of recommendations
 - View structured results
 
+Live Web Application:
+
+https://shlaiassessmentrecommender-production-1835.up.railway.app
+
 To run locally:
+
 streamlit run frontend.py
 
 
 ## Submission File Generation
 
 To generate predictions for the test dataset:
+
 python -m src.generate_test_predictions
 
-This creates:
-test_predictions.csv
+This creates the final submission file:
+
+anurag_shrivas.csv
 
 Format:
+
 Query,Assessment_url
 
 
@@ -202,27 +221,27 @@ Deployment:
 
 ## Project Structure
 
-app.py
-frontend.py
-requirements.txt
-runtime.txt
-README.md
-approach_document.pdf
-test_predictions.csv
+app.py  
+frontend.py  
+requirements.txt  
+runtime.txt  
+README.md  
+approach_document.pdf  
+anurag_shrivas.csv  
 
-src/
-  - recommender.py
-  - evaluate.py
-  - generate_test_predictions.py
-  - crawler.py
-  - clean_catalog.py
-  - merge_datasets.py
-  - enrich_catalog.py
+src/  
+  - recommender.py  
+  - evaluate.py  
+  - generate_test_predictions.py  
+  - crawler.py  
+  - clean_catalog.py  
+  - merge_datasets.py  
+  - enrich_catalog.py  
 
-data/
-  - shl_master_dataset.csv
+data/  
+  - shl_master_dataset.csv  
 
-screenshots/
+screenshots/  
 
 
 ## Key Highlights
@@ -239,5 +258,9 @@ screenshots/
 
 ## Author
 
-Developed as part of SHL AI Internship Assignment By:
+Developed as part of SHL AI Internship Assignment by:
+
 Anurag Shrivas
+
+GitHub: https://github.com/anuragshrivas027
+LinkedIn: https://linkedin.com/in/anuragshrivas027
