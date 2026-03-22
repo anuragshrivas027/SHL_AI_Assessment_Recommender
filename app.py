@@ -18,24 +18,40 @@ class QueryRequest(BaseModel):
     top_k: int = 10
 
 
-# ✅ ROOT ENDPOINT (THIS WAS MISSING)
+# ✅ ROOT ENDPOINT
 @app.get("/")
 def root():
     return {
         "message": "SHL AI Assessment Recommendation API is running",
         "docs": "/docs",
         "health": "/health",
-        "recommend": "/recommend"
+        "recommend_usage": "Use POST /recommend with JSON body"
     }
 
 
-# Health check
+# ✅ HEALTH CHECK
 @app.get("/health")
 def health_check():
     return {"status": "ok"}
 
 
-# Recommendation endpoint
+# ✅ GET SUPPORT FOR /recommend (to avoid Method Not Allowed)
+@app.get("/recommend")
+def recommend_info():
+    return {
+        "message": "This endpoint requires a POST request",
+        "how_to_use": {
+            "method": "POST",
+            "endpoint": "/recommend",
+            "body": {
+                "query": "Java developer with 3 years experience",
+                "top_k": 5
+            }
+        }
+    }
+
+
+# ✅ POST RECOMMENDATION (MAIN LOGIC)
 @app.post("/recommend")
 def recommend_tests(request: QueryRequest):
 
