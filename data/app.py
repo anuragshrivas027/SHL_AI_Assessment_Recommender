@@ -1,24 +1,30 @@
 import pandas as pd
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from src.recommender import SHLRecommender
 
+# Initialize FastAPI app
 app = FastAPI(
     title="SHL AI Assessment Recommendation API",
     description="API that recommends relevant SHL assessments based on natural language job descriptions using semantic search.",
     version="1.0"
 )
 
-# Load recommender once (important for performance)
-recommender = SHLRecommender("data/shl_master_dataset.csv")
+# Load recommender (once at startup)
+try:
+    recommender = SHLRecommender("data/shl_master_dataset.csv")
+except Exception as e:
+    recommender = None
+    print("Error loading recommender:", e)
 
 
+# Request schema
 class QueryRequest(BaseModel):
     query: str
     top_k: int = 10
 
 
-# Root endpoint (for base URL)
+# Root endpoint (fix for base URL)
 @app.get("/")
 def root():
     return {
@@ -39,21 +45,27 @@ def health_check():
 @app.post("/recommend")
 def recommend_tests(request: QueryRequest):
 
-    results = recommender.recommend(request.query, top_k=request.top_k)
+    if recommender is None:
+        raise HTTPException(status_code=500, detail="Model not loaded")
+
+    try:
+        results = recommender.recommend(request.query, top_k=request.top_k)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
     response = []
 
-    for _, row in results.iterrows():
+    type_mapping = {
+        "K": "Knowledge & Skills",
+        "P": "Personality & Behavior",
+        "A": "Ability & Aptitude",
+        "C": "Competencies",
+        "E": "Assessment Exercises",
+        "S": "Simulations",
+        "D": "Development & 360"
+    }
 
-        type_mapping = {
-            "K": "Knowledge & Skills",
-            "P": "Personality & Behavior",
-            "A": "Ability & Aptitude",
-            "C": "Competencies",
-            "E": "Assessment Exercises",
-            "S": "Simulations",
-            "D": "Development & 360"
-        }
+    for _, row in results.iterrows():
 
         raw_types = str(row.get("test_type", ""))
         mapped_types = [
@@ -62,12 +74,12 @@ def recommend_tests(request: QueryRequest):
         ]
 
         response.append({
-            "url": str(row["url"]),
-            "name": str(row["name"]),
-            "adaptive_support": "Yes" if str(row.get("adaptive_support")).lower() == "yes" else "No",
+            "url": str(row.get("url", "")),
+            "name": str(row.get("name", "")),
+            "adaptive_support": "Yes" if str(row.get("adaptive_support", "")).lower() == "yes" else "No",
             "description": "" if pd.isna(row.get("description")) else str(row.get("description")),
             "duration": int(row.get("duration")) if str(row.get("duration")).isdigit() else 0,
-            "remote_support": "Yes" if str(row.get("remote_support")).lower() == "yes" else "No",
+            "remote_support": "Yes" if str(row.get("remote_support", "")).lower() == "yes" else "No",
             "test_type": mapped_types
         })
 
