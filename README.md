@@ -134,13 +134,21 @@ Input:
 
 The API returns structured JSON containing recommended assessments with metadata.
 
-To run locally:
+### Running Locally
 
-uvicorn app:app --reload
+Start the FastAPI server:
 
-Access API documentation locally:
+python -m uvicorn app:app --reload
 
+By default, the API runs on:
 http://127.0.0.1:8000/docs
+
+If port 8000 is already in use, run:
+
+python -m uvicorn app:app --reload --port 8001
+
+Then open:
+http://127.0.0.1:8001/docs
 
 
 ## Live Deployment
@@ -262,5 +270,5 @@ Developed as part of SHL AI Internship Assignment by:
 
 Anurag Shrivas
 
-GitHub: https://github.com/anuragshrivas027
+GitHub: https://github.com/anuragshrivas027  
 LinkedIn: https://linkedin.com/in/anuragshrivas027
